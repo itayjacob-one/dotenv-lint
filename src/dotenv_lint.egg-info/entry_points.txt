@@ -1,0 +1,2 @@
+[console_scripts]
+dotenv-lint = dotenv_lint.cli:main

@@ -1,0 +1,89 @@
+Metadata-Version: 2.4
+Name: dotenv-lint
+Version: 0.1.0
+Summary: A small CLI linter for .env files
+License: MIT
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+
+# dotenv-lint
+
+A small, pip-installable Python CLI that lints `.env` files.
+
+## Quick Start
+
+```bash
+pip install dotenv-lint
+```
+
+### Lint the default `.env` in the current directory
+
+```bash
+dotenv-lint
+```
+
+### Lint one or more specific files
+
+```bash
+dotenv-lint path/to/.env another/.env
+```
+
+### Check for drift against a `.env.example`
+
+```bash
+dotenv-lint -e .env.example .env
+# or
+dotenv-lint --example .env.example .env
+```
+
+## Output Format
+
+Each finding is printed as:
+
+```
+file:line: LEVEL check-name message
+```
+
+Example:
+
+```
+.env:3: error duplicate Key 'DB_HOST' already defined at line 1
+.env:7: error blank-value Key 'API_KEY' has an empty value
+.env:9: warning key-naming Key 'mySecret' is not UPPER_SNAKE_CASE
+Summary: 2 finding(s) — 2 error(s), 1 warning(s)
+```
+
+## Checks
+
+| # | Name | Level | Description |
+|---|------|-------|-------------|
+| 1 | `drift` | error | Keys present in `.env` but not `.env.example`, or vice versa (requires `--example`). |
+| 2 | `duplicate` | error | The same key appears more than once in a file. |
+| 3 | `malformed` | error | A non-blank, non-comment line with no `=`, or spaces around `=` (e.g. `KEY = value`). |
+| 4 | `blank-value` / `placeholder-value` | error | `KEY=` (empty) or values like `changeme`, `xxx`, `todo`, `fixme`, `placeholder`. |
+| 5 | `key-naming` | warning | Key is not `UPPER_SNAKE_CASE`. Does **not** affect the exit code. |
+| 6 | Summary | info | A final summary line counting findings by type. |
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | No errors (warnings are OK). |
+| `1` | One or more error-level findings. |
+| `2` | Usage error (e.g. file not found). |
+
+## Development
+
+```bash
+git clone https://github.com/example/dotenv-lint
+cd dotenv-lint
+pip install -e .
+python -m pytest -q
+```
+
+## License
+
+MIT
